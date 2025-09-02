@@ -15,6 +15,8 @@ type LoginHandler struct {
 }
 
 func (h *LoginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	l := logging.GetLogger(r)
+
 	method := r.Method
 
 	switch method {
@@ -23,9 +25,9 @@ func (h *LoginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	case http.MethodPost:
 		h.loginPOST(w, r)
 	default:
+		l.Warn("Unsupported method")
 		w.Header().Set("Allow", "GET, POST")
 		w.WriteHeader(http.StatusMethodNotAllowed)
-		w.Write([]byte("Method not allowed"))
 	}
 }
 
@@ -53,11 +55,9 @@ func (h *LoginHandler) loginPOST(w http.ResponseWriter, r *http.Request) {
 	username := r.FormValue("username")
 	password := r.FormValue("password")
 
-	ip := r.RemoteAddr
-
 	ok := session.VerifyCSRFToken(s, r)
 	if !ok {
-		l.Warn("CSRF token mismatch", "username", username, "ip", ip)
+		l.Warn("CSRF token mismatch", "username", username)
 		w.WriteHeader(http.StatusUnauthorized)
 		w.Write([]byte("CSRF Token Mismatch"))
 		return
@@ -65,7 +65,7 @@ func (h *LoginHandler) loginPOST(w http.ResponseWriter, r *http.Request) {
 
 	err := auth.VerifyCredentials(h.db, username, password)
 	if err != nil {
-		l.Warn("Failed login", "username", username, "ip", ip)
+		l.Warn("Failed login", "username", username)
 		w.WriteHeader(http.StatusUnauthorized)
 		w.Write([]byte("Invalid credentials"))
 		return
@@ -73,7 +73,7 @@ func (h *LoginHandler) loginPOST(w http.ResponseWriter, r *http.Request) {
 
 	auth.Login(h.manager, r, username)
 
-	l.Info("Successful login", "username", username, "ip", ip)
+	l.Info("Successful login", "username", username)
 
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("Login success"))

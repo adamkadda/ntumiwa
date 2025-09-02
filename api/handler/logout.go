@@ -15,14 +15,10 @@ type LogoutHandler struct {
 }
 
 func (h *LogoutHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	method := r.Method
-
 	l := logging.GetLogger(r)
 
-	ip := r.RemoteAddr
-
 	if r.Method != http.MethodPost {
-		l.Warn("Failed logout: unsupported method", "method", method, "ip", ip)
+		l.Warn("Failed logout: unsupported method")
 		w.Header().Set("Allow", http.MethodPost)
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		return
@@ -32,7 +28,7 @@ func (h *LogoutHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	authenticated := s.Get("authenticated")
 	if authenticated == false {
-		l.Warn("Failed logout: unauthenticated client", "ip", ip)
+		l.Warn("Failed logout: unauthenticated client")
 		w.WriteHeader(http.StatusNoContent)
 		return
 	}
@@ -40,11 +36,11 @@ func (h *LogoutHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	username := s.Get("username")
 
 	if err := auth.Logout(h.manager, r); err != nil {
-		l.Warn("Failed logout: migration error", "username", username, "ip", ip)
+		l.Warn("Failed logout: migration error", "username", username)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
-	l.Info("Successful logout", "username", username, "ip", ip)
-	w.WriteHeader(http.StatusOK)
+	l.Info("Successful logout", "username", username)
+	w.WriteHeader(http.StatusNoContent)
 }
