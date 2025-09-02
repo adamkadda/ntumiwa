@@ -54,6 +54,7 @@ func Middleware(next http.Handler, m *session.SessionManager) http.Handler {
 				slog.String("request_id", requestID),
 				slog.String("method", r.Method),
 				slog.String("path", r.URL.Path),
+				slog.String("ip", r.RemoteAddr),
 			),
 		)
 
