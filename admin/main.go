@@ -10,13 +10,13 @@ import (
 
 	"github.com/adamkadda/ntumiwa-site/admin/handler"
 	"github.com/adamkadda/ntumiwa-site/shared/config"
-	"github.com/adamkadda/ntumiwa-site/shared/misc"
+	"github.com/adamkadda/ntumiwa-site/shared/tmpl"
 )
 
 //go:embed templates/*.html
 var tmplDir embed.FS
 
-var templates misc.TemplateMap
+var templates tmpl.TemplateMap
 
 func loadTemplates() {
 	base := template.Must(template.ParseFS(tmplDir, "templates/base.html"))

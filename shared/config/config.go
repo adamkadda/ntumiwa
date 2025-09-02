@@ -19,16 +19,24 @@ import (
 type Config struct {
 	API        APIClientConfig
 	DB         PostgresConfig
-	SessionMan SessionManagerConfig
+	Session    SessionManagerConfig
+	Logging    LogConfig
+	Cache      CacheConfig
+	Hash       HashConfig
 	Host       string
 	Port       string
 	ServerType string
+	SecretKey  []byte
 }
 
-// currently unused, not currently crucial
 type LogConfig struct {
 	Style string
 	Level string
+}
+
+type CacheConfig struct {
+	TimeToLive time.Duration
+	GCInterval time.Duration
 }
 
 type PostgresConfig struct {
@@ -53,7 +61,15 @@ type SessionManagerConfig struct {
 	IdleExpiration     time.Duration
 	AbsoluteExpiration time.Duration
 	CookieName         string
-	AdminDomain        string
+	Domain             string
+}
+
+type HashConfig struct {
+	Memory      uint32
+	Iterations  uint32
+	Parallelism uint8
+	SaltLength  uint32
+	KeyLength   uint32
 }
 
 func (pg *PostgresConfig) Connect() (*sql.DB, error) {
@@ -86,6 +102,8 @@ func (pg *PostgresConfig) Connect() (*sql.DB, error) {
 	This method returns an error for future-proofing.
 	In the event that some part of the startup fails e.g. missing DB
 	credentials, or log specs, we can return an appropriate error.
+
+	Still deciding if this is worth doing ^^, error types and all
 */
 
 func LoadConfig() (*Config, error) {
@@ -107,29 +125,41 @@ func LoadConfig() (*Config, error) {
 			MaxIdleConns:        getEnvInt("API_MAX_IDLE_CONNS", 100),
 			MaxIdleConnsPerHost: getEnvInt("API_MAX_IDLE_CONNS_PER_HOST", 100),
 		},
-		SessionMan: SessionManagerConfig{
+		Cache: CacheConfig{},
+		Session: SessionManagerConfig{
 			GCInterval:         getEnvDuration("GC_INTERVAL", 1*time.Hour),
 			IdleExpiration:     getEnvDuration("SESSION_TTI", 1*time.Hour),
 			AbsoluteExpiration: getEnvDuration("SESSION_TTL", 8*time.Hour),
 			CookieName:         os.Getenv("SESSION_COOKIE_NAME"),
-			AdminDomain:        os.Getenv("ADMIN_DOMAIN"),
+			Domain:             os.Getenv("DOMAIN"),
+		},
+		Hash: HashConfig{
+			Memory:      getEnvUint[uint32]("MEMORY"),
+			Iterations:  getEnvUint[uint32]("ITERATIONS"),
+			Parallelism: getEnvUint[uint8]("PARALLELISM"),
+			SaltLength:  getEnvUint[uint32]("SALT_LENGTH"),
+			KeyLength:   getEnvUint[uint32]("KEY_LENGTH"),
 		},
 	}
 
+	KEY_LENGTH = config.Hash.KeyLength
+	config.SecretKey = getEnvSecretKey("SECRET_KEY")
+
 	if config.ServerType == "" {
-		return nil, fmt.Errorf("[CONFIG] SERVER_TYPE not set")
+		panic("[CONFIG] SERVER_TYPE not set")
 	}
 
-	if config.ServerType != "API" && config.API.BaseURL == "" {
-		return nil, fmt.Errorf("ERROR: API_BASE_URL not set")
-	}
+	if config.ServerType == "API" {
+		if config.SessionMan.CookieName == "" {
+			panic("[CONFIG] COOKIE_NAME not set")
+		}
 
-	if config.ServerType == "API" && config.SessionMan.CookieName == "" {
-		return nil, fmt.Errorf("ERROR: COOKIE_NAME not set")
-	}
+		if config.SessionMan.Domain == "" {
+			panic("[CONFIG] DOMAIN not set")
+		}
 
-	if config.ServerType == "API" && config.SessionMan.AdminDomain == "" {
-		return nil, fmt.Errorf("ERROR: ADMIN_DOMAIN not set")
+	} else if config.API.BaseURL == "" {
+		panic("[ERROR] API_BASE_URL not set")
 	}
 
 	return config, nil

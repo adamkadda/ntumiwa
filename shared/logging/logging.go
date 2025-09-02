@@ -1,4 +1,4 @@
-package middleware
+package logging
 
 import (
 	"context"
@@ -8,11 +8,12 @@ import (
 	"os"
 	"time"
 
+	"github.com/adamkadda/ntumiwa-site/internal/session"
 	"github.com/adamkadda/ntumiwa-site/shared/config"
 	"github.com/google/uuid"
 )
 
-func loggingSetup(cfg config.LogConfig) {
+func Setup(cfg config.LogConfig) {
 	var handler slog.Handler
 
 	switch cfg.Style {
@@ -42,7 +43,7 @@ func GetLogger(r *http.Request) *slog.Logger {
 	return logger
 }
 
-func LoggingMiddleware(next http.Handler) http.Handler {
+func Middleware(next http.Handler, m *session.SessionManager) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		start := time.Now()
 
@@ -61,7 +62,12 @@ func LoggingMiddleware(next http.Handler) http.Handler {
 
 		logger.Info("request started")
 
-		ww := NewWrappedWriter(w)
+		ww := &wrappedWriter{
+			ResponseWriter: w,
+			request:        r,
+			manager:        m,
+			statusCode:     http.StatusOK,
+		}
 
 		next.ServeHTTP(ww, r)
 

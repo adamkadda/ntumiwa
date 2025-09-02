@@ -1,4 +1,4 @@
-package middleware
+package logging
 
 import (
 	"net/http"
@@ -14,7 +14,7 @@ import (
 	Only the logging middleware directly accesses its data fields.
 */
 
-type WrappedWriter struct {
+type wrappedWriter struct {
 	http.ResponseWriter
 	request    *http.Request
 	manager    *session.SessionManager
@@ -22,28 +22,14 @@ type WrappedWriter struct {
 	size       int
 }
 
-func NewWrappedWriter(
-	w http.ResponseWriter,
-	r *http.Request,
-	m *session.SessionManager,
-) *WrappedWriter {
-
-	return &WrappedWriter{
-		ResponseWriter: w,
-		request:        r,
-		manager:        m,
-		statusCode:     http.StatusOK,
-	}
-}
-
-func (w *WrappedWriter) WriteHeader(code int) {
+func (w *wrappedWriter) WriteHeader(code int) {
 	w.writeCookieOnce()
 
 	w.ResponseWriter.WriteHeader(code)
 	w.statusCode = code
 }
 
-func (w *WrappedWriter) Write(b []byte) (int, error) {
+func (w *wrappedWriter) Write(b []byte) (int, error) {
 	w.writeCookieOnce()
 
 	bytesWritten, err := w.ResponseWriter.Write(b)
@@ -54,7 +40,7 @@ func (w *WrappedWriter) Write(b []byte) (int, error) {
 /*
 	Call stack when writing response body (or headers):
 
-	WrappedWriter.Write(b)
+	wrappedWriter.Write(b)
 	 └─> writeCookieOnce()
 		  └─> SessionManager.WriteCookie(w.ResponseWriter, r)
 			   └─> cookies.WriteSigned(w.ResponseWriter, cookie, secretKey)
@@ -63,9 +49,9 @@ func (w *WrappedWriter) Write(b []byte) (int, error) {
 							  └─> w.ResponseWriter.Header().Add("Set-Cookie", ...)
 
 	Always pass the underlying http.ResponseWriter (w.ResponseWriter),
-	not the WrappedWriter itself.
+	not the wrappedWriter itself.
 
-	If we passed WrappedWriter, downstream functions might call our
+	If we passed wrappedWriter, downstream functions might call our
 	overridden Write or WriteHeader methods, leading to unintended
 	recursion.
 
@@ -73,7 +59,7 @@ func (w *WrappedWriter) Write(b []byte) (int, error) {
 	http.ResponseWriter, not a wrapper around it.
 */
 
-func (w *WrappedWriter) writeCookieOnce() {
+func (w *wrappedWriter) writeCookieOnce() {
 	ctx := w.request.Context()
 	if cookies.CookieWritten(ctx) {
 		return

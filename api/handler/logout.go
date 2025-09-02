@@ -1,0 +1,50 @@
+package handler
+
+import (
+	"database/sql"
+	"net/http"
+
+	"github.com/adamkadda/ntumiwa-site/internal/auth"
+	"github.com/adamkadda/ntumiwa-site/internal/session"
+	"github.com/adamkadda/ntumiwa-site/shared/logging"
+)
+
+type LogoutHandler struct {
+	db      *sql.DB
+	manager *session.SessionManager
+}
+
+func (h *LogoutHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	method := r.Method
+
+	l := logging.GetLogger(r)
+
+	ip := r.RemoteAddr
+
+	if r.Method != http.MethodPost {
+		l.Warn("Failed logout: unsupported method", "method", method, "ip", ip)
+		w.Header().Set("Allow", http.MethodPost)
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		return
+	}
+
+	s := session.GetSession(r)
+
+	authenticated := s.Get("authenticated")
+	if authenticated == false {
+		l.Warn("Failed logout: unauthenticated client", "ip", ip)
+		w.WriteHeader(http.StatusNoContent)
+		return
+	}
+
+	username := s.Get("username")
+
+	if err := auth.Logout(h.manager, r); err != nil {
+		l.Warn("Failed logout: migration error", "username", username, "ip", ip)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	l.Info("Successful logout", "username", username, "ip", ip)
+	w.WriteHeader(http.StatusOK)
+}

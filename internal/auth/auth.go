@@ -52,8 +52,8 @@ func Register(db *sql.DB, username string, password string) error {
 
 // Invoke only after authentication
 func Login(
-	r *http.Request,
 	m *session.SessionManager,
+	r *http.Request,
 	username string,
 ) error {
 	session := session.GetSession(r)
@@ -71,8 +71,8 @@ func Login(
 }
 
 func Logout(
-	r *http.Request,
 	m *session.SessionManager,
+	r *http.Request,
 ) error {
 	session := session.GetSession(r)
 

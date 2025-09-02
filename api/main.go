@@ -6,7 +6,8 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/adamkadda/ntumiwa-site/api/session"
+	"github.com/adamkadda/ntumiwa-site/internal/hash"
+	"github.com/adamkadda/ntumiwa-site/internal/session"
 	"github.com/adamkadda/ntumiwa-site/shared/config"
 	"github.com/adamkadda/ntumiwa-site/shared/middleware"
 	"github.com/joho/godotenv"
@@ -26,26 +27,29 @@ func main() {
 	}
 
 	sessionManager := session.NewSessionManager(
-		session.NewInMemorySessionStore(),
-		config.SessionMan.GCInterval,
-		config.SessionMan.IdleExpiration,
-		config.SessionMan.AbsoluteExpiration,
-		config.SessionMan.CookieName,
-		config.SessionMan.AdminDomain,
+		session.NewSessionStore(),
+		config.Session.GCInterval,
+		config.Session.IdleExpiration,
+		config.Session.AbsoluteExpiration,
+		config.Session.CookieName,
+		config.Session.Domain,
+		config.SecretKey,
 	)
+
+	hash.Setup(config.Hash)
 
 	logger := log.New(os.Stdout, "["+config.ServerType+"]", log.LstdFlags)
 
 	mux := http.NewServeMux()
 
-	stack := middleware.NewStack(
-		middleware.Logging(logger),
-		sessionManager.Handle,
+	adminStack := middleware.NewStack(
+		middleware.LoggingMiddleware,
+		sessionManager.Middleware,
 	)
 
 	server := http.Server{
 		Addr:    config.Port,
-		Handler: stack(mux),
+		Handler: adminStack(mux),
 	}
 
 	logger.Printf("Listening on port %s ...\n", config.Port)
