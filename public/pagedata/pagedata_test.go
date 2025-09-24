@@ -6,10 +6,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/adamkadda/ntumiwa-site/shared/api"
-	"github.com/adamkadda/ntumiwa-site/shared/cache"
-	"github.com/adamkadda/ntumiwa-site/shared/config"
-	"github.com/adamkadda/ntumiwa-site/shared/models"
+	"github.com/adamkadda/ntumiwa/shared/api"
+	"github.com/adamkadda/ntumiwa/shared/cache"
+	"github.com/adamkadda/ntumiwa/shared/config"
+	"github.com/adamkadda/ntumiwa/shared/models"
 	"github.com/stretchr/testify/assert"
 )
 

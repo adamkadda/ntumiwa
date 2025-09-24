@@ -4,9 +4,9 @@ import (
 	"database/sql"
 	"net/http"
 
-	"github.com/adamkadda/ntumiwa-site/internal/auth"
-	"github.com/adamkadda/ntumiwa-site/internal/session"
-	"github.com/adamkadda/ntumiwa-site/shared/logging"
+	"github.com/adamkadda/ntumiwa/internal/auth"
+	"github.com/adamkadda/ntumiwa/internal/session"
+	"github.com/adamkadda/ntumiwa/shared/logging"
 )
 
 type LogoutHandler struct {

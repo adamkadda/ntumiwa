@@ -1,6 +1,6 @@
-# ntumiwa-site
+# ntumiwa
 
-This is a full-stack web application built primarily with Go's net/http module. The project is currently undergoing a rewrite from the stable version written in Rust.
+A full-stack web application built primarily with Go's net/http module. The project is currently undergoing a rewrite from the stable version written in Rust.
 
 ![Home Preview](assets/home-preview.png)
 
@@ -25,7 +25,6 @@ This project uses a Monorepo design. A unified codebase makes it easier for me t
 - Upcoming/past performances list
 - Media gallery (videos, images, press kit download)
 - Mailing list form with spam protection (honeypot)
-- Cookie consent popup
 - `robots.txt` setup
 
 **Admin Dashboard** (`admin.nadiatumiwa.com`)
@@ -34,8 +33,8 @@ This project uses a Monorepo design. A unified codebase makes it easier for me t
 - Manage events, bio content, contact info, and mailing list
 
 **Backend API**
-- Public endpoints: fetch events, bio (short/full), media, contact details
-- Admin endpoints: full CRUD for events, content, contact
+- Public endpoints: events, venues, programmes, etc...
+- Admin endpoints: CRUD for event and content management 
 - Route protection, input validation, structured data responses
 - PostgreSQL database integration, schema definition and versioned migrations
 
@@ -52,16 +51,16 @@ This project uses a Monorepo design. A unified codebase makes it easier for me t
 **Services**
 - [x] Plan the rewrite!
 - [x] Public frontend
-- [ ] Admin dashboard
-- [ ] Backend API
+- [x] Admin dashboard
+- [x] Backend API
 
 **Database**
-- [ ] PostgreSQL configured (connection + credentials)
-- [ ] Schema defined with versioned migrations
+- [x] PostgreSQL configured (connection + credentials)
+- [x] Schema defined with versioned migrations
 
 **CI/CD & DevOps**
 - [ ] Plan CI/CD pipeline (likely Jenkins)
 - [ ] Automated linting and testing pipeline
 - [ ] Build and deployment steps for API and frontend apps
 - [ ] Staging and production environments planned
-- [ ] Plan secrets/config management
+- [x] Plan secrets/config management

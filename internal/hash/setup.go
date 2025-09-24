@@ -1,7 +1,7 @@
 package hash
 
 import (
-	"github.com/adamkadda/ntumiwa-site/shared/config"
+	"github.com/adamkadda/ntumiwa/shared/config"
 	"golang.org/x/crypto/argon2"
 )
 

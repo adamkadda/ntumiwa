@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 
-	"github.com/adamkadda/ntumiwa-site/api/server"
+	"github.com/adamkadda/ntumiwa/api/server"
 )
 
 func main() {

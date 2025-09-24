@@ -6,7 +6,7 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/adamkadda/ntumiwa-site/shared/models"
+	"github.com/adamkadda/ntumiwa/shared/models"
 )
 
 func (api *APIClient) FetchBriefBio() ([]string, error) {

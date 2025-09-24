@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"github.com/adamkadda/ntumiwa-site/shared/config"
+	"github.com/adamkadda/ntumiwa/shared/config"
 )
 
 func Setup(cfg config.Config) {

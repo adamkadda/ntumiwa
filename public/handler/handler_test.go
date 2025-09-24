@@ -10,8 +10,8 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/adamkadda/ntumiwa-site/public/pagedata"
-	"github.com/adamkadda/ntumiwa-site/shared/models"
+	"github.com/adamkadda/ntumiwa/public/pagedata"
+	"github.com/adamkadda/ntumiwa/shared/models"
 	"github.com/stretchr/testify/assert"
 )
 

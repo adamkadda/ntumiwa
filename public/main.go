@@ -8,11 +8,11 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/adamkadda/ntumiwa-site/public/handler"
-	"github.com/adamkadda/ntumiwa-site/public/pagedata"
-	"github.com/adamkadda/ntumiwa-site/shared/api"
-	"github.com/adamkadda/ntumiwa-site/shared/config"
-	"github.com/adamkadda/ntumiwa-site/shared/middleware"
+	"github.com/adamkadda/ntumiwa/public/handler"
+	"github.com/adamkadda/ntumiwa/public/pagedata"
+	"github.com/adamkadda/ntumiwa/shared/api"
+	"github.com/adamkadda/ntumiwa/shared/config"
+	"github.com/adamkadda/ntumiwa/shared/middleware"
 	"github.com/joho/godotenv"
 )
 

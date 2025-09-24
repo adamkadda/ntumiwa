@@ -3,8 +3,8 @@ package logging
 import (
 	"net/http"
 
-	"github.com/adamkadda/ntumiwa-site/internal/cookies"
-	"github.com/adamkadda/ntumiwa-site/internal/session"
+	"github.com/adamkadda/ntumiwa/internal/cookies"
+	"github.com/adamkadda/ntumiwa/internal/session"
 )
 
 /*

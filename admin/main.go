@@ -8,9 +8,9 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/adamkadda/ntumiwa-site/admin/handler"
-	"github.com/adamkadda/ntumiwa-site/shared/config"
-	"github.com/adamkadda/ntumiwa-site/shared/tmpl"
+	"github.com/adamkadda/ntumiwa/admin/handler"
+	"github.com/adamkadda/ntumiwa/shared/config"
+	"github.com/adamkadda/ntumiwa/shared/tmpl"
 )
 
 //go:embed templates/*.html

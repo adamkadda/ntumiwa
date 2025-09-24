@@ -8,8 +8,8 @@ import (
 	"os"
 	"time"
 
-	"github.com/adamkadda/ntumiwa-site/internal/session"
-	"github.com/adamkadda/ntumiwa-site/shared/config"
+	"github.com/adamkadda/ntumiwa/internal/session"
+	"github.com/adamkadda/ntumiwa/shared/config"
 	"github.com/google/uuid"
 )
 

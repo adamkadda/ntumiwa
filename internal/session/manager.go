@@ -7,8 +7,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/adamkadda/ntumiwa-site/internal/cookies"
-	"github.com/adamkadda/ntumiwa-site/shared/logging"
+	"github.com/adamkadda/ntumiwa/internal/cookies"
+	"github.com/adamkadda/ntumiwa/shared/logging"
 )
 
 type SessionManager struct {

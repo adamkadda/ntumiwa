@@ -8,9 +8,9 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/adamkadda/ntumiwa-site/internal/db"
-	"github.com/adamkadda/ntumiwa-site/shared/logging"
-	"github.com/adamkadda/ntumiwa-site/shared/models"
+	"github.com/adamkadda/ntumiwa/internal/db"
+	"github.com/adamkadda/ntumiwa/shared/logging"
+	"github.com/adamkadda/ntumiwa/shared/models"
 )
 
 type EventHandler struct {

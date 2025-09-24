@@ -6,10 +6,10 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/adamkadda/ntumiwa-site/internal/db"
-	"github.com/adamkadda/ntumiwa-site/internal/hash"
-	"github.com/adamkadda/ntumiwa-site/internal/session"
-	"github.com/adamkadda/ntumiwa-site/shared/logging"
+	"github.com/adamkadda/ntumiwa/internal/db"
+	"github.com/adamkadda/ntumiwa/internal/hash"
+	"github.com/adamkadda/ntumiwa/internal/session"
+	"github.com/adamkadda/ntumiwa/shared/logging"
 )
 
 var (

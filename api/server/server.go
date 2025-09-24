@@ -5,14 +5,14 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/adamkadda/ntumiwa-site/api/handler"
-	"github.com/adamkadda/ntumiwa-site/internal/auth"
-	"github.com/adamkadda/ntumiwa-site/internal/db"
-	"github.com/adamkadda/ntumiwa-site/internal/hash"
-	"github.com/adamkadda/ntumiwa-site/internal/session"
-	"github.com/adamkadda/ntumiwa-site/shared/config"
-	"github.com/adamkadda/ntumiwa-site/shared/logging"
-	"github.com/adamkadda/ntumiwa-site/shared/middleware"
+	"github.com/adamkadda/ntumiwa/api/handler"
+	"github.com/adamkadda/ntumiwa/internal/auth"
+	"github.com/adamkadda/ntumiwa/internal/db"
+	"github.com/adamkadda/ntumiwa/internal/hash"
+	"github.com/adamkadda/ntumiwa/internal/session"
+	"github.com/adamkadda/ntumiwa/shared/config"
+	"github.com/adamkadda/ntumiwa/shared/logging"
+	"github.com/adamkadda/ntumiwa/shared/middleware"
 	"github.com/joho/godotenv"
 )
 

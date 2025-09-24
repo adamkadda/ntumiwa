@@ -5,7 +5,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/adamkadda/ntumiwa-site/shared/tmpl"
+	"github.com/adamkadda/ntumiwa/shared/tmpl"
 )
 
 func Dashboard(logger *log.Logger, template *template.Template) http.Handler {

@@ -1,6 +1,6 @@
 package pagedata
 
-import "github.com/adamkadda/ntumiwa-site/shared/models"
+import "github.com/adamkadda/ntumiwa/shared/models"
 
 type HomeData struct {
 	BriefBio             []string             `json:"briefBio"`

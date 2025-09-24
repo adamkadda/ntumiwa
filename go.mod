@@ -1,4 +1,4 @@
-module github.com/adamkadda/ntumiwa-site
+module github.com/adamkadda/ntumiwa
 
 go 1.24.3
 

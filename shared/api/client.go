@@ -3,7 +3,7 @@ package api
 import (
 	"net/http"
 
-	"github.com/adamkadda/ntumiwa-site/shared/config"
+	"github.com/adamkadda/ntumiwa/shared/config"
 )
 
 type APIClient struct {

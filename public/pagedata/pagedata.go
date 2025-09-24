@@ -3,8 +3,8 @@ package pagedata
 import (
 	"time"
 
-	"github.com/adamkadda/ntumiwa-site/shared/api"
-	"github.com/adamkadda/ntumiwa-site/shared/cache"
+	"github.com/adamkadda/ntumiwa/shared/api"
+	"github.com/adamkadda/ntumiwa/shared/cache"
 )
 
 type Pages interface {

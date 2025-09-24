@@ -5,7 +5,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/adamkadda/ntumiwa-site/public/pagedata"
+	"github.com/adamkadda/ntumiwa/public/pagedata"
 )
 
 func Home(logger *log.Logger, templates *template.Template, pageData pagedata.Pages) http.Handler {
