@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/adamkadda/ntumiwa-site/internal/cookies"
+	"github.com/adamkadda/ntumiwa-site/shared/logging"
 )
 
 type SessionManager struct {
@@ -174,30 +175,37 @@ func VerifyCSRFToken(session *Session, r *http.Request) bool {
 	return match
 }
 
-func (m *SessionManager) Middleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		session, request := m.start(r)
+func Middleware(
+	m *SessionManager,
+) func(http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			l := logging.GetLogger(r)
 
-		w.Header().Add("Vary", "Cookie")
-		w.Header().Add("Cache-Control", `no-cache="Set-Cookie"`)
+			session, request := m.start(r)
 
-		if request.Method == http.MethodPost ||
-			request.Method == http.MethodPut ||
-			request.Method == http.MethodPatch ||
-			request.Method == http.MethodDelete {
+			w.Header().Add("Vary", "Cookie")
+			w.Header().Add("Cache-Control", `no-cache="Set-Cookie"`)
 
-			if !VerifyCSRFToken(session, request) {
-				http.Error(w, "CSRF Token mismatch", http.StatusForbidden)
+			if request.Method == http.MethodPost ||
+				request.Method == http.MethodPut ||
+				request.Method == http.MethodPatch ||
+				request.Method == http.MethodDelete {
+
+				if !VerifyCSRFToken(session, request) {
+					l.Warn("CSRF Token mismatch")
+					http.Error(w, "CSRF Token mismatch", http.StatusForbidden)
+				}
 			}
-		}
 
-		next.ServeHTTP(w, r)
+			next.ServeHTTP(w, r)
 
-		m.save(session)
+			m.save(session)
 
-		ctx := r.Context()
-		if !cookies.CookieWritten(ctx) {
-			m.WriteCookie(w, r)
-		}
-	})
+			ctx := r.Context()
+			if !cookies.CookieWritten(ctx) {
+				m.WriteCookie(w, r)
+			}
+		})
+	}
 }

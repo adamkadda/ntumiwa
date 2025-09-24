@@ -13,7 +13,7 @@ func CompareHashAndPassword(encodedHash, password string) bool {
 	salt, hash, err := decodeHash(encodedHash)
 	if err != nil {
 		decodedOk = false
-		salt, hash, _ = decodeHash(Dummy)
+		salt, hash, _ = decodeHash(DummyHash())
 	}
 
 	otherHash := argon2.IDKey(

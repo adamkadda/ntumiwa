@@ -6,8 +6,10 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/adamkadda/ntumiwa-site/internal/db"
 	"github.com/adamkadda/ntumiwa-site/internal/hash"
 	"github.com/adamkadda/ntumiwa-site/internal/session"
+	"github.com/adamkadda/ntumiwa-site/shared/logging"
 )
 
 var (
@@ -16,6 +18,24 @@ var (
 	ErrInvalidCredentials = errors.New("invalid username or password")
 	ErrInternalError      = errors.New("internal error")
 )
+
+/*
+	IsAuthenticated returns true if the session is authenticated.
+
+	Panics if type mismatch, because the session's "authenticated"
+	key must ALWAYS return a bool.
+*/
+
+func IsAuthenticated(r *http.Request) bool {
+	s := session.GetSession(r)
+
+	result, ok := s.Get("authenticated").(bool)
+	if !ok {
+		panic("type assertion failed: authenticated value not bool")
+	}
+
+	return result
+}
 
 func Register(db *sql.DB, username string, password string) error {
 
@@ -128,26 +148,44 @@ func VerifyCredentials(db *sql.DB, username string, password string) error {
 	to also handle scanning errors.
 */
 
-func Auth(db *sql.DB, next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		session := session.GetSession(r)
+func Middleware(
+	m *session.SessionManager,
+	db *db.DB,
+) func(http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			l := logging.GetLogger(r)
 
-		authenticated := session.Get("authenticated")
-		if authenticated == false {
-			http.Error(w, "Unauthenticated", http.StatusForbidden)
-		}
+			if !IsAuthenticated(r) {
+				l.Info("Request blocked; unauthenticated session")
+				http.Error(w, "Unauthenticated", http.StatusForbidden)
+				return
+			}
 
-		username := session.Get("username")
+			session := session.GetSession(r)
 
-		var exists bool
-		err := db.QueryRow(
-			"SELECT EXISTS(SELECT 1 FROM users WHERE username = ?)",
-			username,
-		).Scan(&exists)
-		if err != nil || !exists {
-			http.Error(w, "Unauthenticated", http.StatusForbidden)
-		}
+			username, ok := session.Get("username").(string)
+			if !ok {
+				l.Error("Non-string value in session username field")
+				http.Error(w, "Unauthenticated", http.StatusForbidden)
+				return
+			}
 
-		next.ServeHTTP(w, r)
-	})
+			exists, err := db.UserExists(r.Context(), username)
+			if err != nil {
+				l.Error("Failed to query database: %w", err)
+				http.Error(w, "Unauthenticated", http.StatusForbidden)
+				return
+			}
+
+			if !exists {
+				l.Warn("Request blocked; potential hijacking")
+				m.Migrate(session)
+				http.Error(w, "Unauthenticated", http.StatusForbidden)
+				return
+			}
+
+			next.ServeHTTP(w, r)
+		})
+	}
 }

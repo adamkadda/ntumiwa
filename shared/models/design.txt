@@ -1,0 +1,43 @@
+Step 1: Determine who needs your API
+
+- Public users
+- The artist/manager
+
+Step 2: Identify the desired outcomes
+
+- View agenda (public)
+- View biography (public)
+- View published media (public)
+- Managing an event from start to completion
+- View draft/published/cancelled/archived events
+- Manage biographies
+- Manage contact details
+- Manage media content
+
+Step 3: Map the steps required to achieve these outcomes
+
+- List performances -> View agenda (public)
+- Lookup biography -> View biography (public)
+- List media & press kit -> View published media (public)
+- Create an event (draft) -> update event -> Managing an event
+
+Create an event (status:draft)
+- really only requires a title
+- optional note field e.g. "See email thread with events@dedoelen.nl"
+- venue, date, programme, ticket link can be added later
+
+Update an event
+- update title
+- set a date
+- input ticket link
+- assign a venue (from existing or new)
+- assign a programme (from existing or new)
+
+Publish an event (status:published)
+- verify all fields are complete
+- update status draft->published
+
+Cancel an event (status:cancelled)
+- update status published->cancelled 
+
+Create a programme
