@@ -1,0 +1,275 @@
+/* =================================
+           Brief Biography
+================================= */
+
+/* <div> properties */
+
+#brief-biography .wrapper {
+  z-index: 12;
+}
+
+#brief-biography .padded {
+  padding-top: 0px;
+  padding-bottom: 80px;
+}
+
+@media (min-width: 1250px) {
+  #brief-biography .padded {
+    padding-top: 60px;
+    padding-bottom: 260px;
+  }
+
+  #brief-biography .wrapper {
+    color: var(--main-light);
+    width: 40%;
+  }
+
+  #brief-biography a {
+    color: var(--main-light);
+    border-color: var(--main-light);
+  }
+}
+
+/* background image */
+
+#brief-biography .bg-image {
+  /*
+    In order to match the clip-path of the
+    previous section (i.e. the #introduction),
+    we apply a slightly different clip-path to
+    the top of this section.
+
+    Furthermore, we  apply a negative top
+    margin because the sections do not align.
+    */
+
+  clip-path: polygon(0 0, 100% 10.4vw, 100% 100%, 0 100%);
+  margin-top: -10.4vw;
+
+  background-position: top center;
+}
+
+/* section title */
+
+#brief-biography .section-title {
+  margin-top: 1em;
+}
+
+/* text content */
+
+#brief-biography article {
+  line-height: 1.6;
+  font-weight: 400;
+
+  margin-top: 2em;
+  margin-bottom: 2em;
+}
+
+#brief-biography article :nth-child(1) {
+  margin-bottom: 1em;
+}
+
+/* =================================
+        Upcoming Performances
+================================= */
+
+/* <div> properties */
+
+#upcoming-performances .container {
+  justify-content: center;
+}
+
+#upcoming-performances .padded {
+  padding-top: 80px;
+  padding-bottom: 80px;
+}
+
+#upcoming-performances {
+  background-color: var(--main-light);
+
+  /* 
+    There seems to be a gap in between
+    sections. This gap takes the color
+    the <body>, therefore I cannot deal
+    with it directly. That's why I have
+    opted to use a 10px negative margin
+    */
+
+  margin-top: -10px;
+}
+
+#upcoming-performances .wrapper {
+  /* 
+    This 10px margin was included to 
+    offset the 10px negative margin 
+    applied to #upcoming-performances
+    */
+
+  margin-top: 10px;
+
+  /*
+    `width: 100%` ensures that the
+    wrapper expands to the maximum
+    size permitted by default styles.
+    */
+
+  width: 100%;
+}
+
+/* section title */
+
+#upcoming-performances .section-title {
+  justify-content: center;
+
+  margin-bottom: 3em;
+}
+
+/* performance */
+
+.performance {
+  display: flex;
+  padding-top: 30px;
+  padding-bottom: 30px;
+}
+
+.first {
+  border-top: 1px solid #c2c1c1;
+}
+
+.passed {
+  text-decoration: line-through;
+}
+
+.performance time {
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 700;
+  font-size: 17px;
+}
+
+.performance .title {
+  font-size: 25px;
+  font-weight: 600;
+}
+
+.performance .venue {
+  font-size: 20px;
+  font-weight: 400;
+  margin-top: 5px;
+}
+
+.performance .programme {
+  margin-top: 20px;
+}
+
+.piece {
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+.piece .composer {
+  font-weight: 600;
+}
+
+.buy-tickets {
+  color: var(--main-dark);
+
+  text-transform: uppercase;
+  text-decoration: none;
+  letter-spacing: 0.1em;
+  font-weight: 700;
+
+  display: inline-block;
+
+  border-bottom: 1px solid var(--main-dark);
+}
+
+.sold-out {
+  cursor: default;
+}
+
+/* events styling */
+
+@media (max-width: 1099px) {
+  .performance {
+    flex-direction: column;
+    flex-wrap: wrap;
+
+    border-bottom: 1px solid #c2c1c1;
+  }
+
+  .performance time {
+    order: 1;
+  }
+
+  .performance .description {
+    order: 2;
+    margin-top: 30px;
+    margin-bottom: 30px;
+  }
+
+  .ticketing {
+    order: 3;
+  }
+
+  .buy-tickets {
+    font-size: 15px;
+    padding-bottom: 2px;
+  }
+}
+
+@media (min-width: 1100px) {
+  .events {
+    padding-top: 30px;
+  }
+
+  .performance {
+    flex-direction: row;
+    justify-content: space-between;
+    padding-bottom: 30px;
+
+    border-bottom: 1px solid #c2c1c1;
+  }
+
+  .performance time {
+    order: 1;
+    flex-shrink: 0;
+    width: 210px;
+  }
+
+  .performance .description {
+    order: 2;
+    flex-shrink: 0;
+    width: 550px;
+  }
+
+  .performance .ticketing {
+    order: 3;
+    flex-shrink: 0;
+    width: 120px;
+    height: 18px;
+
+    display: flex;
+    justify-content: end;
+  }
+
+  .buy-tickets {
+    font-size: 17px;
+  }
+}
+
+#upcoming-performances .box-link {
+  margin-top: 4em;
+}
+
+.stay-posted {
+  font-weight: bold;
+  font-size: 20px;
+  text-align: center;
+}
+
+@media (max-width: 799px) {
+  .stay-posted {
+    font-size: 16px;
+  }
+}
