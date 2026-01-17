@@ -1,0 +1,21 @@
+#!/bin/bash
+
+LOCAL=$(pwd)
+REMOTE=/var/www/nadiatumiwa.com/html
+
+echo -e "syncing...\n"
+rsync -av --delete \
+    --exclude='.git' \
+    --exclude='.gitignore' \
+    --exclude='deploy' \
+    --exclude='README.md' \
+    "$LOCAL/" "$REMOTE/"
+
+echo -e "changing ownership...\n"
+sudo chown -R www-data:www-data "$REMOTE/"
+
+echo -e "changing permissions...\n"
+sudo find "$REMOTE" -type d -exec chmod 755 {} \;
+sudo find "$REMOTE" -type f -exec chmod 644 {} \;
+
+echo -e "deployed!\n"

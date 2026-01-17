@@ -1,37 +1,35 @@
-# General macOS
+# macOS
 .DS_Store
 .AppleDouble
-.LSOverride
-Icon
 ._*
-.DocumentRevisions-V100
-.fseventsd
 .Spotlight-V100
-.TemporaryItems
 .Trashes
 .VolumeIcon.icns
-.com.apple.timemachine.donotpresent
-.AppleDB
-.AppleDesktop
-Network Trash Folder
-Temporary Items
-.apdisk
-*.icloud
 
-# Rust build output
-/debug
-/target
-**/*.rs.bk
-*.pdb
-/target/debug/deps/
+# Go build files
+/bin/
+/build/
+*.exe
+*.test
+*.out
 
-# IDE
+# Env files
+.env
+.env.*
+
+# Editors
 .vscode/
 .idea/
-*.iml
+*.swp
 *~
-.swp
-.swo
 
-# Testing
-/tests
+# Logs and temp
+*.log
+tmp/
+temp/
+
+# Live preview (dev)
+preview/
+
+# Test API
+testAPI/
