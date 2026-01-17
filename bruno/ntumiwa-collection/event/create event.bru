@@ -1,0 +1,35 @@
+meta {
+  name: create event
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{host}}/events
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "title": "End of Spring Concert",
+    "date": "2030-03-31T15:30:00Z",
+    "ticket_link": null,
+    "venue_id": 6,
+    "programme_id": 9,
+    "notes": "foo bar baz"
+  }
+}
+
+script:post-response {
+  bru.setEnvVar("csrf-token", res.headers["x-csrf-token"]);
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

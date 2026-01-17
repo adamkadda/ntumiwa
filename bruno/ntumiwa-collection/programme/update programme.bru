@@ -1,0 +1,52 @@
+meta {
+  name: update programme
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{host}}/programmes/:id
+  body: json
+  auth: inherit
+}
+
+params:path {
+  id: 9
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "title": "",
+    "pieces": [
+      {
+        "piece_id": 1,
+        "sequence": 1
+      },
+      {
+        "piece_id": 2,
+        "sequence": 2
+      },
+      {
+        "piece_id": 3,
+        "sequence": 3
+      },
+      {
+        "piece_id": 4,
+        "sequence": 4
+      }
+    ]
+  }
+}
+
+script:post-response {
+  bru.setEnvVar("csrf-token", res.headers["x-csrf-token"]);
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

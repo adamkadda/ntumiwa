@@ -5,7 +5,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/adamkadda/ntumiwa/shared/tmpl"
+	"github.com/adamkadda/ntumiwa/internal/tmpl"
 )
 
 func Dashboard(logger *log.Logger, template *template.Template) http.Handler {
@@ -39,8 +39,8 @@ func Login(logger *log.Logger, templates tmpl.TemplateMap) http.Handler {
 				http.Error(w, "Bad Request (#`^`)/", http.StatusBadRequest)
 			}
 
-			username := r.FormValue("username")
-			password := r.FormValue("password")
+			// username := r.FormValue("username")
+			// password := r.FormValue("password")
 
 		default:
 			w.WriteHeader(http.StatusMethodNotAllowed)

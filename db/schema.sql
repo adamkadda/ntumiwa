@@ -1,3 +1,6 @@
+-- Consider extending variants to include 'cancelled' and 'deleted'
+CREATE TYPE event_status AS ENUM ('draft', 'published', 'archived');
+
 CREATE TABLE composers (
     composer_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     short_name VARCHAR(100) NOT NULL,
@@ -32,11 +35,13 @@ CREATE TABLE events (
     event_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     event_title VARCHAR(200) NOT NULL,
     venue_id INT REFERENCES venues(venue_id),
-    event_date TIMESTAMP NOT NULL,
-    ticket_link VARCHAR(500),
-    programme_id INT NOT NULL REFERENCES programmes(programme_id) ON DELETE CASCADE,
+    event_date TIMESTAMP,
+    ticket_link VARCHAR(500) DEFAULT '',
+    programme_id INT REFERENCES programmes(programme_id) ON DELETE CASCADE,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    status event_status NOT NULL DEFAULT 'draft',
+    notes TEXT DEFAULT ''
 );
 
 -- Create a trigger for updating the created_at column

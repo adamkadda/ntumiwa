@@ -1,0 +1,39 @@
+meta {
+  name: update event
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{host}}/events/:id
+  body: json
+  auth: inherit
+}
+
+params:path {
+  id: 8
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "title": null,
+    "date": null,
+    "ticket_link": null,
+    "venue_id": 1,
+    "programme_id": 9,
+    "notes": null
+  }
+}
+
+script:post-response {
+  bru.setEnvVar("csrf-token", res.headers["x-csrf-token"]);
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

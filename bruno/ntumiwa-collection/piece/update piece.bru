@@ -1,0 +1,42 @@
+meta {
+  name: update piece
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{host}}/pieces/:id
+  body: json
+  auth: inherit
+}
+
+params:path {
+  id: 1
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "title": "",
+    "composer_id": 0
+  }
+}
+
+script:pre-request {
+  {
+    "title": "",
+    "composer_id": 0
+  }
+}
+
+script:post-response {
+  bru.setEnvVar("csrf-token", res.headers["x-csrf-token"]);
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

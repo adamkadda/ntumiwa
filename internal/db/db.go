@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -15,6 +16,9 @@ var (
 	ErrStatusUnchanged     = errors.New("no status change")
 	ErrForeignKeyViolation = errors.New("foreign key constraint violation")
 	ErrTitleNotFound       = errors.New("title is a required field")
+	ErrEmptyRequest        = errors.New("request body is empty")
+	ErrBlankField          = errors.New("blank field forbidden")
+	ErrImmutableState      = errors.New("resource cannot be modified")
 )
 
 type DB struct {
@@ -37,6 +41,21 @@ func New(connString string, timeout time.Duration) *DB {
 	pool, err := pgxpool.NewWithConfig(context.Background(), cfg)
 	if err != nil {
 		panic(fmt.Errorf("Failed to initialize DB pool: %w", err))
+	}
+
+	// WARN: Exerpt from pgxpool documentation:
+	// A pool returns [from New or NewWithConfig] without waiting
+	// for any connections to be established.
+	// Acquire a connection immediately after creating the pool
+	// to check if a connection can successfully be established.
+
+	deadline := time.Now().Add(5 * time.Second)
+	ctx, cancel := context.WithDeadline(context.Background(), deadline)
+	defer cancel()
+
+	err = pool.Ping(ctx)
+	if err != nil {
+		log.Fatalf("[DB] Ping failed: %v", err)
 	}
 
 	return &DB{

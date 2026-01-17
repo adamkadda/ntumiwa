@@ -1,0 +1,20 @@
+meta {
+  name: list venues
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{host}}/venues
+  body: none
+  auth: inherit
+}
+
+script:post-response {
+  bru.setEnvVar("csrf-token", res.headers["x-csrf-token"]);
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

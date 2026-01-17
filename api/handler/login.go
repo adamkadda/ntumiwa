@@ -5,8 +5,8 @@ import (
 	"net/http"
 
 	"github.com/adamkadda/ntumiwa/internal/auth"
+	"github.com/adamkadda/ntumiwa/internal/logging"
 	"github.com/adamkadda/ntumiwa/internal/session"
-	"github.com/adamkadda/ntumiwa/shared/logging"
 )
 
 type LoginHandler struct {
@@ -31,8 +31,6 @@ func (h *LoginHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// TODO: Implement rate limiting
-
 func (h *LoginHandler) loginGET(w http.ResponseWriter, r *http.Request) {
 	s := session.GetSession(r)
 	l := logging.GetLogger(r)
@@ -49,19 +47,10 @@ func (h *LoginHandler) loginGET(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *LoginHandler) loginPOST(w http.ResponseWriter, r *http.Request) {
-	s := session.GetSession(r)
 	l := logging.GetLogger(r)
 
 	username := r.FormValue("username")
 	password := r.FormValue("password")
-
-	ok := session.VerifyCSRFToken(s, r)
-	if !ok {
-		l.Warn("CSRF token mismatch", "username", username)
-		w.WriteHeader(http.StatusUnauthorized)
-		w.Write([]byte("CSRF Token Mismatch"))
-		return
-	}
 
 	err := auth.VerifyCredentials(h.db, username, password)
 	if err != nil {

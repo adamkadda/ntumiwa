@@ -5,6 +5,7 @@ import (
 	"crypto/sha256"
 	"encoding/base64"
 	"errors"
+	"log/slog"
 	"net/http"
 )
 
@@ -36,11 +37,13 @@ func Write(w http.ResponseWriter, cookie http.Cookie) error {
 func Read(r *http.Request, name string) (string, error) {
 	cookie, err := r.Cookie(name)
 	if err != nil {
+		slog.Debug("Failed to read cookie", slog.String("error", err.Error()))
 		return "", err
 	}
 
 	value, err := base64.URLEncoding.DecodeString(cookie.Value)
 	if err != nil {
+		slog.Debug("Decoding error", slog.String("error", err.Error()))
 		return "", ErrInvalidValue
 	}
 
@@ -72,11 +75,13 @@ func WriteSigned(w http.ResponseWriter, cookie http.Cookie, secretKey []byte) er
 func ReadSigned(r *http.Request, name string, secretKey []byte) (string, error) {
 	signedValue, err := Read(r, name)
 	if err != nil {
+		slog.Debug("Failed to obtain signed value", slog.String("error", err.Error()))
 		return "", err
 	}
 
 	//
 	if len(signedValue) < sha256.Size {
+		slog.Debug("Hash length mismatch")
 		return "", ErrInvalidValue
 	}
 
@@ -90,8 +95,14 @@ func ReadSigned(r *http.Request, name string, secretKey []byte) (string, error) 
 
 	// Compare two MACs
 	if !hmac.Equal([]byte(signature), expectedSignature) {
+		slog.Debug("Hash mismatch")
 		return "", ErrInvalidValue
 	}
+
+	slog.Debug("Decoded unsigned cookie",
+		slog.String("name", name),
+		slog.String("value", value),
+	)
 
 	return value, nil
 }

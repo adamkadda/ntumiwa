@@ -5,8 +5,8 @@ import (
 	"net/http"
 
 	"github.com/adamkadda/ntumiwa/internal/auth"
+	"github.com/adamkadda/ntumiwa/internal/logging"
 	"github.com/adamkadda/ntumiwa/internal/session"
-	"github.com/adamkadda/ntumiwa/shared/logging"
 )
 
 type LogoutHandler struct {

@@ -5,7 +5,7 @@ import (
 	"log/slog"
 	"net/http"
 
-	"github.com/adamkadda/ntumiwa/shared/logging"
+	"github.com/adamkadda/ntumiwa/internal/logging"
 )
 
 /*

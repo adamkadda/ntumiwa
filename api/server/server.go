@@ -7,89 +7,75 @@ import (
 
 	"github.com/adamkadda/ntumiwa/api/handler"
 	"github.com/adamkadda/ntumiwa/internal/auth"
+	"github.com/adamkadda/ntumiwa/internal/config"
 	"github.com/adamkadda/ntumiwa/internal/db"
 	"github.com/adamkadda/ntumiwa/internal/hash"
+	"github.com/adamkadda/ntumiwa/internal/logging"
+	"github.com/adamkadda/ntumiwa/internal/middleware"
 	"github.com/adamkadda/ntumiwa/internal/session"
-	"github.com/adamkadda/ntumiwa/shared/config"
-	"github.com/adamkadda/ntumiwa/shared/logging"
-	"github.com/adamkadda/ntumiwa/shared/middleware"
 	"github.com/joho/godotenv"
 )
 
 type Server struct {
 	db     *db.DB
-	addr   string
-	router *http.ServeMux
+	port   string
+	router http.Handler
 }
 
 func New() *Server {
-	err := godotenv.Load()
+	err := godotenv.Load(".env.api")
 	if err != nil {
-		log.Printf("Failed to load .env: %v", err)
-	} else {
-		fmt.Println("Loaded .env successfully")
+		log.Fatalf("godotenv failure: %v\n", err)
 	}
 
 	config, err := config.LoadConfig()
 	if err != nil {
-		log.Fatalf("Failed to load config: %v", err)
+		log.Fatalf("[CONFIG] Load failure: %v\n", err)
 	}
 
-	fmt.Print("Config loaded !\n")
+	log.Printf("[CONFIG] Load finished !\n")
+
+	logging.Setup(config.Logging)
 
 	// DB setup,
 	// construct connection string (DSN),
 	// pass base timeout value for queries
 	db := db.New(config.DB.DSN(), config.DB.Timeout)
-	fmt.Print("DB initialized !\n")
 
 	hash.Setup(config.Hash)
-	fmt.Print("Hash setup complete !\n")
 
-	logging.Setup(config.Logging)
-	fmt.Print("Log setup complete !\n")
+	layers := []middleware.Middleware{
+		logging.Middleware(),
+	}
 
-	manager := session.NewSessionManager(
-		session.NewSessionStore(),
-		config.Session.GCInterval,
-		config.Session.AbsoluteExpiration,
-		config.Session.IdleExpiration,
-		config.Session.Domain,
-		config.Session.CookieName,
-		config.SecretKey,
-	)
+	if config.AppEnv != "TEST" {
+		store := session.NewSessionStore()
+		manager := session.NewSessionManager(config.Session, store)
 
-	fmt.Print("Session manager initialized !\n")
+		layers = append(layers,
+			session.Middleware(manager),
+			auth.Middleware(manager, db),
+		)
+	}
 
-	// TODO: Apply to handlers after testing
-	_ = middleware.NewStack(
-		logging.Middleware(manager),
-		session.Middleware(manager),
-		auth.Middleware(manager, db),
-	)
-
-	// fmt.Print("Middleware ready !")
-
-	eventHandler := handler.NewEventHandler(db)
-	programmeHandler := handler.NewProgrammeHandler(db)
-	pieceHandler := handler.NewPieceHandler(db)
-	composerHandler := handler.NewComposerHandler(db)
-	venueHandler := handler.NewVenueHandler(db)
+	stack := middleware.NewStack(layers...)
 
 	router := http.NewServeMux()
 
-	router.Handle("events/{id}", eventHandler)
-	router.HandleFunc("/events/{id}/draft", eventHandler.DraftEvent)
-	router.HandleFunc("/events/{id}/publish", eventHandler.PublishEvent)
-	router.HandleFunc("/events/{id}/archive", eventHandler.ArchiveEvent)
+	venueHandler := handler.NewVenueHandler(db)
+	venueHandler.RegisterRoutes(router)
 
-	router.Handle("/programmes/{id}", programmeHandler)
+	composerHandler := handler.NewComposerHandler(db)
+	composerHandler.RegisterRoutes(router)
 
-	router.Handle("/pieces/{id}", pieceHandler)
+	pieceHandler := handler.NewPieceHandler(db)
+	pieceHandler.RegisterRoutes(router)
 
-	router.Handle("/composers/{id}", composerHandler)
+	programmeHandler := handler.NewProgrammeHandler(db)
+	programmeHandler.RegisterRoutes(router)
 
-	router.Handle("/venues/{id}", venueHandler)
+	eventHandler := handler.NewEventHandler(db)
+	eventHandler.RegisterRoutes(router)
 
 	// TODO: Implement biography endpoint
 
@@ -99,16 +85,14 @@ func New() *Server {
 
 	// TODO: Implement login & logout endpoints
 
-	fmt.Print("Routes registered !\n")
-
 	return &Server{
 		db:     db,
-		addr:   config.Port,
-		router: router,
+		port:   config.Port,
+		router: stack(router),
 	}
 }
 
 func (s *Server) Run() error {
-	fmt.Printf("Listening on port %s...\n", s.addr)
-	return http.ListenAndServe(s.addr, s.router)
+	fmt.Printf("Listening on port %s...\n", s.port)
+	return http.ListenAndServe(":"+s.port, s.router)
 }

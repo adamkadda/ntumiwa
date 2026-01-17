@@ -2,7 +2,9 @@ package session
 
 import (
 	"crypto/rand"
+	"encoding/base64"
 	"io"
+	"log/slog"
 	"time"
 )
 
@@ -13,6 +15,9 @@ type Session struct {
 	lastActivityAt time.Time
 }
 
+// NOTE: Double encoding happens, once here and
+// again during cookie reading/writing.
+// I do this for better debugging.
 func generateSessionID() string {
 	id := make([]byte, 32)
 
@@ -21,7 +26,12 @@ func generateSessionID() string {
 		panic("somehow failed to generate session identifier")
 	}
 
-	return string(id)
+	sessionID := base64.URLEncoding.EncodeToString(id)
+
+	// TODO: Revert back to Debug level
+	slog.Debug("Generated session id", slog.String("session_id", sessionID))
+
+	return sessionID
 }
 
 func generateCSRFToken() string {
@@ -32,7 +42,12 @@ func generateCSRFToken() string {
 		panic("somehow failed to generate CSRF token")
 	}
 
-	return string(token)
+	encoded := base64.RawURLEncoding.EncodeToString(token)
+
+	// TODO: Revert back to Debug level
+	slog.Debug("Generated CSRF token", slog.String("token", encoded))
+
+	return encoded
 }
 
 func NewSession() *Session {

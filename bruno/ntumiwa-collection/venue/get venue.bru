@@ -1,0 +1,24 @@
+meta {
+  name: get venue
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{host}}/venues/:id
+  body: none
+  auth: inherit
+}
+
+params:path {
+  id: 1
+}
+
+script:post-response {
+  bru.setEnvVar("csrf-token", res.headers["x-csrf-token"]);
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

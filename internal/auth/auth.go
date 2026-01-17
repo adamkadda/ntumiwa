@@ -4,12 +4,13 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"log/slog"
 	"net/http"
 
 	"github.com/adamkadda/ntumiwa/internal/db"
 	"github.com/adamkadda/ntumiwa/internal/hash"
+	"github.com/adamkadda/ntumiwa/internal/logging"
 	"github.com/adamkadda/ntumiwa/internal/session"
-	"github.com/adamkadda/ntumiwa/shared/logging"
 )
 
 var (
@@ -173,7 +174,7 @@ func Middleware(
 
 			exists, err := db.UserExists(r.Context(), username)
 			if err != nil {
-				l.Error("Failed to query database: %w", err)
+				l.Error("Failed to query database: %w", slog.String("error", err.Error()))
 				http.Error(w, "Unauthenticated", http.StatusForbidden)
 				return
 			}
