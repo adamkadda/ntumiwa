@@ -27,7 +27,7 @@
 }
 
 #past-performances {
-  background-color: var(--grey);
+  background-color: var(--grey, #e9eceb);
 }
 
 #past-performances .container {
